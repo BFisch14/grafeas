@@ -191,6 +191,13 @@ service GrafeasV1Beta1 {
     };
     option (google.api.method_signature) = "parent,filter";
   };
+
+  rpc ListResources(ListResourcesRequest) returns (ListResourcesResponse) {
+    option (google.api.http) = {
+      get: "/v1beta1/{parent=projects/*}/resources"
+    };
+    option (google.api.method_signature) = "parent,filter";
+  }
 };
 
 // An instance of an analysis type that has been found on a resource.
@@ -589,4 +596,30 @@ message VulnerabilityOccurrencesSummary {
     // The total number of vulnerabilities associated with this resource.
     int64 total_count = 4;
   }
+}
+
+
+message ListResourcesRequest {
+  // The name of the project to list occurrences for in the form of
+  // `projects/[PROJECT_ID]`.
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference).type = "cloudresourcemanager.googleapis.com/Project"
+  ];
+  // The filter expression.
+  string filter = 2;
+  // Number of occurrences to return in the list. Must be positive. Max allowed
+  // page size is 1000. If not specified, page size defaults to 20.
+  int32 page_size = 3;
+  // Token to provide to skip to a particular spot in the list.
+  string page_token = 4;
+}
+
+message ListResourcesResponse {
+  // The resources requested.
+  repeated grafeas.v1beta1.Resource resources = 1;
+  // The next pagination token in the list response. It should be used as
+  // `page_token` for the following request. An empty value means no more
+  // results.
+  string next_page_token = 2;
 }
