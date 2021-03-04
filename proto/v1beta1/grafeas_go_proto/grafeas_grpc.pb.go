@@ -53,6 +53,7 @@ type GrafeasV1Beta1Client interface {
 	ListNoteOccurrences(ctx context.Context, in *ListNoteOccurrencesRequest, opts ...grpc.CallOption) (*ListNoteOccurrencesResponse, error)
 	// Gets a summary of the number and severity of occurrences.
 	GetVulnerabilityOccurrencesSummary(ctx context.Context, in *GetVulnerabilityOccurrencesSummaryRequest, opts ...grpc.CallOption) (*VulnerabilityOccurrencesSummary, error)
+	ListResources(ctx context.Context, in *ListResourcesRequest, opts ...grpc.CallOption) (*ListResourcesResponse, error)
 }
 
 type grafeasV1Beta1Client struct {
@@ -198,6 +199,15 @@ func (c *grafeasV1Beta1Client) GetVulnerabilityOccurrencesSummary(ctx context.Co
 	return out, nil
 }
 
+func (c *grafeasV1Beta1Client) ListResources(ctx context.Context, in *ListResourcesRequest, opts ...grpc.CallOption) (*ListResourcesResponse, error) {
+	out := new(ListResourcesResponse)
+	err := c.cc.Invoke(ctx, "/grafeas.v1beta1.GrafeasV1Beta1/ListResources", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GrafeasV1Beta1Server is the server API for GrafeasV1Beta1 service.
 // All implementations should embed UnimplementedGrafeasV1Beta1Server
 // for forward compatibility
@@ -237,6 +247,7 @@ type GrafeasV1Beta1Server interface {
 	ListNoteOccurrences(context.Context, *ListNoteOccurrencesRequest) (*ListNoteOccurrencesResponse, error)
 	// Gets a summary of the number and severity of occurrences.
 	GetVulnerabilityOccurrencesSummary(context.Context, *GetVulnerabilityOccurrencesSummaryRequest) (*VulnerabilityOccurrencesSummary, error)
+	ListResources(context.Context, *ListResourcesRequest) (*ListResourcesResponse, error)
 }
 
 // UnimplementedGrafeasV1Beta1Server should be embedded to have forward compatible implementations.
@@ -287,6 +298,9 @@ func (UnimplementedGrafeasV1Beta1Server) ListNoteOccurrences(context.Context, *L
 }
 func (UnimplementedGrafeasV1Beta1Server) GetVulnerabilityOccurrencesSummary(context.Context, *GetVulnerabilityOccurrencesSummaryRequest) (*VulnerabilityOccurrencesSummary, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVulnerabilityOccurrencesSummary not implemented")
+}
+func (UnimplementedGrafeasV1Beta1Server) ListResources(context.Context, *ListResourcesRequest) (*ListResourcesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListResources not implemented")
 }
 
 // UnsafeGrafeasV1Beta1Server may be embedded to opt out of forward compatibility for this service.
@@ -570,6 +584,24 @@ func _GrafeasV1Beta1_GetVulnerabilityOccurrencesSummary_Handler(srv interface{},
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GrafeasV1Beta1_ListResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListResourcesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrafeasV1Beta1Server).ListResources(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grafeas.v1beta1.GrafeasV1Beta1/ListResources",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrafeasV1Beta1Server).ListResources(ctx, req.(*ListResourcesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _GrafeasV1Beta1_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "grafeas.v1beta1.GrafeasV1Beta1",
 	HandlerType: (*GrafeasV1Beta1Server)(nil),
@@ -633,6 +665,10 @@ var _GrafeasV1Beta1_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVulnerabilityOccurrencesSummary",
 			Handler:    _GrafeasV1Beta1_GetVulnerabilityOccurrencesSummary_Handler,
+		},
+		{
+			MethodName: "ListResources",
+			Handler:    _GrafeasV1Beta1_ListResources_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
